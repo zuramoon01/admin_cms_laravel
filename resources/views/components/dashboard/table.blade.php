@@ -1,4 +1,4 @@
-@props(['title', 'tableProduct'])
+@props(['title'])
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
@@ -8,9 +8,7 @@
 
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-bordered"
-                id="{{ isset($tableProduct) && !empty($tableProduct) ? $tableProduct : '' }}" width="100%"
-                cellspacing="0">
+            <table class="table table-bordered" width="100%" cellspacing="0">
                 {{ $slot }}
             </table>
         </div>

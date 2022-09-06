@@ -22,4 +22,9 @@ class Transaction extends Model
         'status',
     ];
     protected $guarded = ['id'];
+
+    public function transactionDetail()
+    {
+        return $this->hasMany(TransactionDetail::class, 'transactions_id');
+    }
 }
