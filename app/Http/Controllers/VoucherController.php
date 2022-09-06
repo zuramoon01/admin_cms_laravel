@@ -26,7 +26,7 @@ class VoucherController extends Controller
                     'label' => 'Type',
                 ],
                 [
-                    'type' => 'text',
+                    'type' => 'number',
                     'name' => 'disc_value',
                     'label' => 'Disc Value',
                 ],
@@ -53,7 +53,7 @@ class VoucherController extends Controller
     {
         $validated = $request->validate([
             'code' => 'required|max:50',
-            'type' => 'required|max:1|between:1,2|integer|numeric',
+            'type' => 'required|max:2|between:1,2|integer|numeric',
             'disc_value' => 'required|integer|numeric',
             'start_date' => 'date',
             'end_date' => 'date|after_or_equal:start_date',
@@ -99,7 +99,7 @@ class VoucherController extends Controller
                     'label' => 'Type',
                 ],
                 [
-                    'type' => 'text',
+                    'type' => 'number',
                     'name' => 'disc_value',
                     'label' => 'Disc Value',
                 ],
