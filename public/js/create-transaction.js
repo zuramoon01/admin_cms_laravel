@@ -1,7 +1,9 @@
 const selectProduct = document.querySelector("#products_id_select");
+const selectVoucher = document.querySelector("#voucher_id");
 const tableProductBody = document.querySelector("#table-products-tbody");
 
 let products = [];
+let vouchers = [];
 
 const getProducts = async () => {
     const response = await fetch("/products/get/all");
@@ -11,7 +13,16 @@ const getProducts = async () => {
     updateSelectProduct();
 };
 
+const getVouchers = async () => {
+    const response = await fetch("/vouchers/get/all");
+    const data = await response.json();
+    vouchers = data;
+
+    updateSelectVoucher();
+};
+
 getProducts();
+getVouchers();
 
 const updateSelectProduct = () => {
     selectProduct.innerHTML = '<option value="" selected>Choose One</option>';
@@ -21,9 +32,21 @@ const updateSelectProduct = () => {
 
         if (status == 1) {
             selectProduct.innerHTML += `
-                <option value="${id}" selected>${name}</option>
+                <option value="${id}">${name}</option>
             `;
         }
+    });
+};
+
+const updateSelectVoucher = () => {
+    selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
+
+    vouchers.map((product) => {
+        const { id, code } = product;
+
+        selectVoucher.innerHTML += `
+            <option value="${id}">${code}</option>
+        `;
     });
 };
 
@@ -71,13 +94,15 @@ const addProduct = () => {
             </tr>
         `;
 
+        selectVoucher.disabled = false;
         updateTotalPrice();
     }
 };
 
-const updateTotalPrice = () => {
+const updateTotalPrice = (percent = 100) => {
     let totalPrice = 0;
     let totalPurchasePrice = 0;
+
     const tr = [...tableProductBody.children];
     const subTotal = document.querySelector("#sub_total");
     const total = document.querySelector("#total");
@@ -89,9 +114,23 @@ const updateTotalPrice = () => {
         totalPurchasePrice += parseInt(prices[3].value);
     });
 
-    subTotal.value = `${totalPrice}`;
-    total.value = `${totalPrice}`;
-    purchaseTotal.value = `${totalPurchasePrice}`;
+    console.log(vouchers);
+    const selectedVoucher = [...selectVoucher.selectedOptions][0];
+    if (selectVoucher) {
+        const { disc_value } = vouchers.find(
+            (voucher) => voucher.id == selectedVoucher.value
+        );
+        const discValue = parseInt(disc_value);
+
+        if (discValue) percent = discValue;
+    }
+
+    totalPrice = totalPrice * (percent / 100);
+    totalPurchasePrice = totalPurchasePrice * (percent / 100);
+
+    subTotal.value = totalPrice;
+    total.value = totalPrice;
+    purchaseTotal.value = totalPurchasePrice;
 };
 
 const updatePrice = (e) => {

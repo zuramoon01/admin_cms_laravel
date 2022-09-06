@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Product;
+use App\Models\Voucher;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -22,6 +23,10 @@ use App\Http\Controllers\ProductCategoryController;
 
 Route::get('/products/get/all', function () {
     return response()->json(Product::all());
+});
+
+Route::get('/vouchers/get/all', function () {
+    return response()->json(Voucher::all());
 });
 
 Route::get('/products/get/{product:id}', function (Product $product) {

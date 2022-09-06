@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+use App\Models\Voucher;
 use App\Models\Transaction;
-use App\Models\TransactionDetail;
 
+use App\Models\VoucherUsage;
 use Illuminate\Http\Request;
+use App\Models\TransactionDetail;
 
 class TransactionController extends Controller
 {
@@ -76,6 +77,7 @@ class TransactionController extends Controller
                     'label' => 'Status',
                 ],
             ],
+            'vouchers' => Voucher::all(),
         ]);
     }
 
@@ -135,6 +137,14 @@ class TransactionController extends Controller
                 'price_total' => $request->price_total[$i],
                 'price_purchase_satuan' => $request->price_purchase_satuan[$i],
                 'price_purchase_total' => $request->price_purchase_total[$i],
+            ]);
+        }
+
+        if ($request->voucher_id != 0) {
+            VoucherUsage::create([
+                'transactions_id' => $id,
+                'vouchers_id' => $request->voucher_id,
+                'discounted_value' => Voucher::where('id', $request->voucher_id)->get()->first()->disc_value,
             ]);
         }
 
@@ -222,6 +232,7 @@ class TransactionController extends Controller
                     'label' => 'Status',
                 ],
             ],
+            'vouchers' => Voucher::all(),
             'transactions' => $transaction,
             'transaction_details' => TransactionDetail::where('transactions_id', $transaction->id)->get(),
         ]);

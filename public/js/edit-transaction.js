@@ -49,9 +49,9 @@ const updateTotalPrice = () => {
         totalPurchasePrice += parseInt(prices[3].value);
     });
 
-    subTotal.value = `${totalPrice}`;
-    total.value = `${totalPrice}`;
-    purchaseTotal.value = `${totalPurchasePrice}`;
+    subTotal.value = totalPrice;
+    total.value = totalPrice;
+    purchaseTotal.value = totalPurchasePrice;
 };
 
 const updatePrice = (e) => {

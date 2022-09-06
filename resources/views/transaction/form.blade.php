@@ -32,14 +32,24 @@
                 <table class="table table-bordered" width="100%" cellspacing="0">
                     <colgroup>
                         <col class="col-md-4">
-                        <col class="col-md-4">
-                        <col class="col-md-4">
+                        @if ($menu === 'edit')
+                            <col class="col-md-4">
+                            <col class="col-md-4">
+                        @endif
+                        @if ($menu === 'create')
+                            <col class="col-md-3">
+                            <col class="col-md-3">
+                            <col class="col-md-2">
+                        @endif
                     </colgroup>
                     <thead>
                         <tr>
                             <th class="text-center">Products Name</th>
                             <th class="text-center">Quantity</th>
                             <th class="text-center">Sub Total</th>
+                            @if ($menu === 'create')
+                                <th class="text-center">Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody id="table-products-tbody">
@@ -56,7 +66,7 @@
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
-                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice(this)" onkeydown="updatePrice(this)" value="{{ $product->qty }}" readonly>
+                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}" readonly>
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
@@ -70,11 +80,16 @@
                                     </td>
                                 </tr>
                             @endforeach
-
                         @endisset
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="mb-3 col-md-4">
+            <label for="voucher_id" class="form-label">Voucher</label>
+            <select id="voucher_id" class="custom-select" name="voucher_id" onchange="updateTotalPrice()" disabled>
+            </select>
         </div>
 
         @foreach ($formInputs as $formInput)
