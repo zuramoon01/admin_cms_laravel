@@ -36,6 +36,38 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/logout', 'logout');
 });
 
+Route::controller(ProductCategoryController::class)->group(function () {
+    Route::prefix('/product-categories')->group(function () {
+        Route::get('/create', 'create');
+        Route::post('/store', 'store');
+        Route::get('/data', 'data');
+        Route::get('/{product_category:id}/edit', 'edit');
+        Route::put('/{product_category:id}/update', 'update');
+        Route::delete('/{product_category:id}/delete', 'delete');
+    });
+});
+
+Route::controller(ProductController::class)->group(function () {
+    Route::prefix('/products')->group(function () {
+        Route::get('/create', 'create');
+        Route::post('/store', 'store');
+        Route::get('/data', 'data');
+        Route::get('/{product:id}/edit', 'edit');
+        Route::put('/{product:id}/update', 'update');
+        Route::delete('/{product:id}/delete', 'delete');
+    });
+});
+
+Route::controller(VoucherController::class)->group(function () {
+    Route::prefix('/vouchers')->group(function () {
+        Route::get('/create', 'create');
+        Route::post('/store', 'store');
+        Route::get('/data', 'data');
+        Route::get('/{voucher:id}/edit', 'edit');
+        Route::put('/{voucher:id}/update', 'update');
+        Route::delete('/{voucher:id}/delete', 'delete');
+    });
+});
 Route::controller(TransactionController::class)->group(function () {
     Route::prefix('/transactions')->group(function () {
         Route::get('/create', 'create');
