@@ -17,7 +17,7 @@
                     <div class="mb-3 col-md-12">
                         <label for="{{ $formInput['name'] }}" class="form-label">{{ $formInput['label'] }}</label>
                         {{-- prettier-ignore --}}
-                        <input type="text" class="form-control" id="{{ $formInput['name'] }}" name="{{ $formInput['name'] }}" placeholder="{{ $formInput['label'] }}" value="{{ isset($product) ? $product[$formInput['name']] : old($formInput['name']) }}">
+                        <input type="text" class="form-control" id="{{ $formInput['name'] }}" name="{{ $formInput['name'] }}" placeholder="{{ $formInput['label'] }}" value="{{ isset($productCategory) ? $productCategory[$formInput['name']] : old($formInput['name']) }}">
 
                         @error($formInput['name'])
                             <x-all.flash_message :message="$message" />
@@ -27,7 +27,7 @@
                     <div class="mb-3 col-md-12">
                         <label for="{{ $formInput['name'] }}" class="form-label">{{ $formInput['label'] }}</label>
                         {{-- prettier-ignore --}}
-                        <textarea class="form-control" id="{{ $formInput['name'] }}" rows="{{ ($formInput['name'] === 'description') ? 5 : 2}}" name="{{ $formInput['name'] }}">{{ isset($product) ? $product[$formInput['name']] : old($formInput['name']) }}</textarea>
+                        <textarea class="form-control" id="{{ $formInput['name'] }}" rows="{{ ($formInput['name'] === 'description') ? 5 : 2}}" name="{{ $formInput['name'] }}">{{ isset($productCategory) ? $productCategory[$formInput['name']] : old($formInput['name']) }}</textarea>
 
                         @error($formInput['name'])
                             <x-all.flash_message :message="$message" />

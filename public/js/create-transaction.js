@@ -4,7 +4,7 @@ const tableProductBody = document.querySelector("#table-products-tbody");
 let products = [];
 
 const getProducts = async () => {
-    const response = await fetch("/products/all");
+    const response = await fetch("/products/get/all");
     const data = await response.json();
     products = data;
 
@@ -117,7 +117,7 @@ removeProduct = async (e) => {
 
     const id = e.parentElement.parentElement.children[0].children[0].value;
 
-    const response = await fetch(`/products/${id}`);
+    const response = await fetch(`/products/get/${id}`);
     const data = await response.json();
 
     products = [...products, data];

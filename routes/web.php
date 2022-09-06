@@ -2,10 +2,12 @@
 
 use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\TransactionDetail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\ProductCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,11 +20,11 @@ use App\Http\Controllers\TransactionController;
 |
 */
 
-Route::get('/products/all', function () {
+Route::get('/products/get/all', function () {
     return response()->json(Product::all());
 });
 
-Route::get('/products/{product:id}', function (Product $product) {
+Route::get('/products/get/{product:id}', function (Product $product) {
     return response()->json($product);
 });
 

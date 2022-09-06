@@ -7,7 +7,7 @@ const idTransaction = {
 let products = [];
 
 const getProducts = async () => {
-    let response = await fetch("/products/all");
+    let response = await fetch("/products/get/all");
     let data = await response.json();
     products = data;
 
