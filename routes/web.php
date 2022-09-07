@@ -1,8 +1,5 @@
 <?php
 
-use App\Models\Product;
-use App\Models\Voucher;
-use App\Models\Transaction;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
@@ -21,71 +18,60 @@ use App\Http\Controllers\ProductCategoryController;
 |
 */
 
-Route::get('/products/get/all', function () {
-    return response()->json(Product::all());
-});
-
-Route::get('/products/get/{product:id}', function (Product $product) {
-    return response()->json($product);
-});
-
-Route::get('/transaction-details/get/{transaction:id}', function (Transaction $transaction) {
-    return response()->json($transaction->transactionDetail);
-});
-
-Route::get('/vouchers/get/all', function () {
-    return response()->json(Voucher::all());
-});
-
-Route::get('/voucher-usages/get/{transaction:id}', function (Transaction $transaction) {
-    return response()->json($transaction->voucherUsage);
-});
-
 Route::controller(AuthController::class)->group(function () {
-    Route::get('/login', 'loginPage');
-    Route::post('/login', 'login');
-    Route::get('/logout', 'logout');
+    Route::middleware(['guest'])->group(function () {
+        Route::get('/login', 'loginPage')->name('login');
+        Route::post('/login', 'login');
+    });
+
+    Route::get('/logout', 'logout')->middleware('auth');
 });
 
-Route::controller(ProductCategoryController::class)->group(function () {
-    Route::prefix('/product-categories')->group(function () {
-        Route::get('/create', 'create');
-        Route::post('/store', 'store');
-        Route::get('/data', 'data');
-        Route::get('/{product_category:id}/edit', 'edit');
-        Route::put('/{product_category:id}/update', 'update');
-        Route::delete('/{product_category:id}/delete', 'delete');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        return redirect('/transactions/data');
     });
-});
+    Route::controller(ProductCategoryController::class)->group(function () {
+        Route::prefix('/product-categories')->group(function () {
+            Route::get('/create', 'create');
+            Route::post('/store', 'store');
+            Route::get('/data', 'data');
+            Route::get('/{product_category:id}/edit', 'edit');
+            Route::put('/{product_category:id}/update', 'update');
+            Route::delete('/{product_category:id}/delete', 'delete');
+        });
+    });
 
-Route::controller(ProductController::class)->group(function () {
-    Route::prefix('/products')->group(function () {
-        Route::get('/create', 'create');
-        Route::post('/store', 'store');
-        Route::get('/data', 'data');
-        Route::get('/{product:id}/edit', 'edit');
-        Route::put('/{product:id}/update', 'update');
-        Route::delete('/{product:id}/delete', 'delete');
+    Route::controller(ProductController::class)->group(function () {
+        Route::prefix('/products')->group(function () {
+            Route::get('/create', 'create');
+            Route::post('/store', 'store');
+            Route::get('/data', 'data');
+            Route::get('/{product:id}/edit', 'edit');
+            Route::put('/{product:id}/update', 'update');
+            Route::delete('/{product:id}/delete', 'delete');
+        });
     });
-});
 
-Route::controller(VoucherController::class)->group(function () {
-    Route::prefix('/vouchers')->group(function () {
-        Route::get('/create', 'create');
-        Route::post('/store', 'store');
-        Route::get('/data', 'data');
-        Route::get('/{voucher:id}/edit', 'edit');
-        Route::put('/{voucher:id}/update', 'update');
-        Route::delete('/{voucher:id}/delete', 'delete');
+    Route::controller(VoucherController::class)->group(function () {
+        Route::prefix('/vouchers')->group(function () {
+            Route::get('/create', 'create');
+            Route::post('/store', 'store');
+            Route::get('/data', 'data');
+            Route::get('/{voucher:id}/edit', 'edit');
+            Route::put('/{voucher:id}/update', 'update');
+            Route::delete('/{voucher:id}/delete', 'delete');
+        });
     });
-});
-Route::controller(TransactionController::class)->group(function () {
-    Route::prefix('/transactions')->group(function () {
-        Route::get('/create', 'create');
-        Route::post('/store', 'store');
-        Route::get('/data', 'data');
-        Route::get('/{transaction:id}/edit', 'edit');
-        Route::put('/{transaction:id}/update', 'update');
-        Route::delete('/{transaction:id}/delete', 'delete');
+
+    Route::controller(TransactionController::class)->group(function () {
+        Route::prefix('/transactions')->group(function () {
+            Route::get('/create', 'create');
+            Route::post('/store', 'store');
+            Route::get('/data', 'data');
+            Route::get('/{transaction:id}/edit', 'edit');
+            Route::put('/{transaction:id}/update', 'update');
+            Route::delete('/{transaction:id}/delete', 'delete');
+        });
     });
 });

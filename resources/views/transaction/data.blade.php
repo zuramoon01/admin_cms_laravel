@@ -1,4 +1,66 @@
 <x-dashboard.layout :name="$name" :menu="$menu">
+    <div class="d-flex align-items-start">
+        <form class="d-none d-sm-inline-block form-inline mb-3 mw-100 navbar-search"
+            action="{{ url(request()->path()) }}">
+            <div class="input-group">
+                <input type="text" class="form-control border-0 small" placeholder="Search Transaction Id"
+                    aria-label="Search" aria-describedby="basic-addon2" name="transaction_id"
+                    value="@if (request()->has('transaction_id')) {{ request('transaction_id') }} @endif">
+
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <form class="d-none d-sm-inline-block form-inline mx-2 mb-3 mw-100 navbar-search"
+            action="{{ url(request()->path()) }}">
+            <div class="input-group">
+                <input type="text" class="form-control border-0 small" placeholder="Search Customer Name"
+                    aria-label="Search" aria-describedby="basic-addon2" name="customer_name"
+                    value="@if (request()->has('customer_name')) {{ request('customer_name') }} @endif">
+
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <form class="d-none d-sm-inline-block form-inline mx-2 mb-3 mw-100 navbar-search"
+            action="{{ url(request()->path()) }}">
+            <div class="input-group">
+                <input type="text" class="form-control border-0 small" placeholder="Search Customer Email"
+                    aria-label="Search" aria-describedby="basic-addon2" name="customer_email"
+                    value="@if (request()->has('customer_email')) {{ request('customer_email') }} @endif">
+
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <form class="d-none d-sm-inline-block form-inline mx-2 mb-3 mw-100 navbar-search"
+            action="{{ url(request()->path()) }}">
+            <div class="input-group">
+                <input type="date" class="form-control border-0 small" placeholder="Search Customer Email"
+                    aria-label="Search" aria-describedby="basic-addon2" name="date">
+
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <a href="{{ request()->url() }}" class="btn btn-danger">Reset</a>
+    </div>
 
     <x-dashboard.table :title="$title">
         <colgroup>
@@ -9,7 +71,19 @@
         <thead>
             <tr>
                 @foreach ($table['title'] as $title)
-                    <th>{{ $title }}</th>
+                    <th>{{ $title }}@if ($title == 'Status')
+                            @php
+                                if (request()->has('status')) {
+                                    $queryStatus = request('status') == 0 ? request()->url() . '?status=1' : (request('status') == 1 ? request()->url() . '?status=2' : request()->url() . '?status=0');
+                                }
+                            @endphp
+                            <a href="@isset($queryStatus) {{ $queryStatus }} @endisset"
+                                style="color:rgba(0,0,0,0.4)">
+                                <i class="fas fa-filter"
+                                    @if (request()->has('status')) style="color: {{ request('status') == 0 ? 'rgba(255,0,0,0.4)' : (request('status') == 1 ? 'rgba(255,255,0,0.4)' : 'rgba(0,255,0,0.4)') }}" @endif></i>
+                            </a>
+                        @endif
+                    </th>
                 @endforeach
 
                 <th class="text-center">Action</th>

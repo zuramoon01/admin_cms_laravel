@@ -66,7 +66,7 @@
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
-                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}">
+                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}" >
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}

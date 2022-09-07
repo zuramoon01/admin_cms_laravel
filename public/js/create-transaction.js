@@ -6,7 +6,7 @@ let products = [];
 let vouchers = [];
 
 const getProducts = async () => {
-    const response = await fetch("/products/get/all");
+    const response = await fetch("/api/products/all");
     const data = await response.json();
     products = data;
 
@@ -14,14 +14,14 @@ const getProducts = async () => {
 };
 
 const getVouchers = async () => {
-    const response = await fetch("/vouchers/get/all");
+    const response = await fetch("/api/vouchers/all");
     const data = await response.json();
     vouchers = data;
 
     selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
 
     vouchers.map((voucher) => {
-        let { id, code, start_date, end_date, status } = voucher;
+        let { id, code, disc_value, start_date, end_date, status } = voucher;
         start_date = start_date.split("-");
         end_date = end_date.split("-");
 
@@ -44,7 +44,9 @@ const getVouchers = async () => {
 
         if (today >= start_date && today <= end_date && status == "1") {
             selectVoucher.innerHTML += `
-                <option value="${id}">${code}</option>
+                <option value="${id}">${code} | Discount ${parseInt(
+                disc_value
+            )}%</option>
             `;
         }
     });
@@ -118,13 +120,18 @@ const addProduct = () => {
 
 const updateTotalPrice = () => {
     let percent = 100;
+    let subTotalPrice = 0;
     let totalPrice = 0;
     let totalPurchasePrice = 0;
+    let totalBeforeDiscount = 0;
 
     const tr = [...tableProductBody.children];
     const subTotal = document.querySelector("#sub_total");
     const total = document.querySelector("#total");
     const purchaseTotal = document.querySelector("#total_purchase");
+    const purchaseTotalBeforeDiscount = document.querySelector(
+        "#total_before_discount"
+    );
 
     tr.forEach((e) => {
         const prices = [...e.children[2].children];
@@ -144,12 +151,15 @@ const updateTotalPrice = () => {
         if (discValue != 0) percent = discValue;
     }
 
+    subTotalPrice = totalPrice;
     totalPrice = totalPrice * (percent / 100);
+    totalBeforeDiscount = totalPurchasePrice;
     totalPurchasePrice = totalPurchasePrice * (percent / 100);
 
-    subTotal.value = totalPrice;
+    subTotal.value = subTotalPrice;
     total.value = totalPrice;
     purchaseTotal.value = totalPurchasePrice;
+    purchaseTotalBeforeDiscount.value = totalBeforeDiscount;
 };
 
 const updatePrice = (e) => {
@@ -175,7 +185,7 @@ removeProduct = async (e) => {
 
     const id = e.parentElement.parentElement.children[0].children[0].value;
 
-    const response = await fetch(`/products/get/${id}`);
+    const response = await fetch(`/api/products/${id}`);
     const data = await response.json();
 
     products = [...products, data];

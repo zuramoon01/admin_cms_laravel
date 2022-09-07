@@ -45,6 +45,13 @@ class TransactionController extends Controller
                     'readonly' => true,
                 ],
                 [
+                    'type' => 'text',
+                    'width' => 12,
+                    'name' => 'total_before_discount',
+                    'label' => 'Total Before Discount',
+                    'readonly' => true,
+                ],
+                [
                     'type' => 'hidden',
                     'width' => 12,
                     'name' => 'total',
@@ -129,15 +136,17 @@ class TransactionController extends Controller
         $id = Transaction::where('transaction_id', $transaction_id)->first()->id;
 
         for ($i = 0; $i < count($request->product_id); $i++) {
-            TransactionDetail::create([
-                'transactions_id' => $id,
-                'products_id' => $request->product_id[$i],
-                'qty' => $request->qty[$i],
-                'price_satuan' => $request->price_satuan[$i],
-                'price_total' => $request->price_total[$i],
-                'price_purchase_satuan' => $request->price_purchase_satuan[$i],
-                'price_purchase_total' => $request->price_purchase_total[$i],
-            ]);
+            if ($request->qty[$i] !== "0") {
+                TransactionDetail::create([
+                    'transactions_id' => $id,
+                    'products_id' => $request->product_id[$i],
+                    'qty' => $request->qty[$i],
+                    'price_satuan' => $request->price_satuan[$i],
+                    'price_total' => $request->price_total[$i],
+                    'price_purchase_satuan' => $request->price_purchase_satuan[$i],
+                    'price_purchase_total' => $request->price_purchase_total[$i],
+                ]);
+            }
         }
 
         if ($request->voucher_id !== "0" || $request->voucher_id !== null) {
@@ -153,14 +162,29 @@ class TransactionController extends Controller
 
     public function data()
     {
+        $data = Transaction::all();
+
+        if (request()->has('transaction_id')) {
+            $data = Transaction::where('transaction_id', 'LIKE', "%" . request('transaction_id') . "%")->get();
+        } else if (request()->has('customer_name')) {
+            $data = Transaction::where('customer_name', 'LIKE', "%" . request('customer_name') . "%")->get();
+        } else if (request()->has('customer_email')) {
+            $data = Transaction::where('customer_email', 'LIKE', "%" . request('customer_email') . "%")->get();
+        } else if (request()->has('status')) {
+            $data = Transaction::where('status', 'LIKE', request('status'))->get();
+        } else if (request()->has('date')) {
+            $queryDate = join("", explode('-', request('date')));
+            $data = Transaction::where('transaction_id', 'LIKE', "%$queryDate%")->get();
+        }
+
         return view('transaction.data', [
             'name' => 'transaction',
             'menu' => 'data',
             'title' => 'Table Transaction',
             'table' => [
                 'title' => ['Transaction Id', 'Customer Name', 'Customer Email', 'Customer Phone', 'Sub Total', 'Total', "Total Purchase", 'Additional Request', 'Payment Method', 'Status'],
-                'size' => [1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1,],
-                'data' => Transaction::all(),
+                'size' => [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
+                'data' => $data,
 
             ],
         ]);
@@ -204,6 +228,13 @@ class TransactionController extends Controller
                     'width' => 12,
                     'name' => 'total',
                     'label' => 'Total',
+                    'readonly' => true,
+                ],
+                [
+                    'type' => 'text',
+                    'width' => 12,
+                    'name' => 'total_before_discount',
+                    'label' => 'Total Before Discount',
                     'readonly' => true,
                 ],
                 [

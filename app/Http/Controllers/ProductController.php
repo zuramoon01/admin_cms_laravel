@@ -99,6 +99,16 @@ class ProductController extends Controller
 
     public function data()
     {
+        $data = Product::all();
+
+        if (request()->has('name')) {
+            $data = Product::where('name', 'LIKE', "%" . request('name') . "%")->get();
+        } else if (request()->has('code')) {
+            $data = Product::where('code', 'LIKE', "%" . request('code') . "%")->get();
+        } else if (request()->has('status')) {
+            $data = Product::where('status', 'LIKE', request('status'))->get();
+        }
+
         return view('product.data', [
             'name' => 'product',
             'menu' => 'data',
@@ -110,16 +120,10 @@ class ProductController extends Controller
                     'Product Categories',
                     'Price',
                     'Purchase Price',
-                    'Short Description',
-                    'Description',
                     'Status',
-                    'New Product',
-                    'Best Seller',
-                    'Featured',
                 ],
-                'size' => [3, 3, 3, 2, 2, 3, 4, 1, 1, 1, 1, 1,],
-                'data' => Product::all(),
-
+                'size' => [2, 1, 2, 2, 2, 2, 1,],
+                'data' => $data,
             ],
         ]);
     }
