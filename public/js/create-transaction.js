@@ -18,7 +18,36 @@ const getVouchers = async () => {
     const data = await response.json();
     vouchers = data;
 
-    updateSelectVoucher();
+    selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
+
+    vouchers.map((voucher) => {
+        let { id, code, start_date, end_date, status } = voucher;
+        start_date = start_date.split("-");
+        end_date = end_date.split("-");
+
+        start_date = new Date(
+            parseInt(start_date[0]),
+            parseInt(start_date[1]),
+            parseInt(start_date[2])
+        );
+        end_date = new Date(
+            parseInt(end_date[0]),
+            parseInt(end_date[1]),
+            parseInt(end_date[2])
+        );
+
+        let day = new Date().getDate();
+        let month = new Date().getMonth();
+        let year = new Date().getFullYear();
+
+        let today = new Date(year, month + 1, day);
+
+        if (today >= start_date && today <= end_date && status == "1") {
+            selectVoucher.innerHTML += `
+                <option value="${id}">${code}</option>
+            `;
+        }
+    });
 };
 
 getProducts();
@@ -35,18 +64,6 @@ const updateSelectProduct = () => {
                 <option value="${id}">${name}</option>
             `;
         }
-    });
-};
-
-const updateSelectVoucher = () => {
-    selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
-
-    vouchers.map((product) => {
-        const { id, code } = product;
-
-        selectVoucher.innerHTML += `
-            <option value="${id}">${code}</option>
-        `;
     });
 };
 
@@ -99,7 +116,8 @@ const addProduct = () => {
     }
 };
 
-const updateTotalPrice = (percent = 100) => {
+const updateTotalPrice = () => {
+    let percent = 100;
     let totalPrice = 0;
     let totalPurchasePrice = 0;
 
@@ -114,15 +132,16 @@ const updateTotalPrice = (percent = 100) => {
         totalPurchasePrice += parseInt(prices[3].value);
     });
 
-    console.log(vouchers);
-    const selectedVoucher = [...selectVoucher.selectedOptions][0];
-    if (selectVoucher) {
+    const selectedVoucher = parseInt(
+        [...selectVoucher.selectedOptions][0].value
+    );
+    if (selectedVoucher != 0) {
         const { disc_value } = vouchers.find(
-            (voucher) => voucher.id == selectedVoucher.value
+            (voucher) => voucher.id === selectedVoucher
         );
         const discValue = parseInt(disc_value);
 
-        if (discValue) percent = discValue;
+        if (discValue != 0) percent = discValue;
     }
 
     totalPrice = totalPrice * (percent / 100);

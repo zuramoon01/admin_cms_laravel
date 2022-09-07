@@ -27,4 +27,9 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionDetail::class, 'transactions_id');
     }
+
+    public function voucherUsage()
+    {
+        return $this->hasMany(VoucherUsage::class, 'transactions_id');
+    }
 }

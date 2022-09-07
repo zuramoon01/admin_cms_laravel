@@ -1,43 +1,59 @@
-const selectProduct = document.querySelector("#products_id_select");
+const selectVoucher = document.querySelector("#voucher_id");
 const tableProductBody = document.querySelector("#table-products-tbody");
 const idTransaction = {
     ...document.querySelector(".edit-transaction").dataset,
 }["id"];
 
-let products = [];
-
-const getProducts = async () => {
-    let response = await fetch("/products/get/all");
+const getVouchers = async () => {
+    let response = await fetch("/vouchers/get/all");
     let data = await response.json();
-    products = data;
+    vouchers = data;
 
-    response = await fetch(`/transactions/get/${idTransaction}`);
-    data = await response.json();
+    response = await fetch(`/voucher-usages/get/${idTransaction}`);
+    data = (await response.json())[0]["vouchers_id"];
+    console.log(data);
 
-    data.map((product) => {
-        const { products_id } = product;
+    selectVoucher.innerHTML = '<option value="0">Choose One</option>';
 
-        products = products.filter((item) => item.id !== products_id);
-    });
+    vouchers.map((voucher) => {
+        let { id, code, start_date, end_date, status } = voucher;
+        start_date = start_date.split("-");
+        end_date = end_date.split("-");
 
-    selectProduct.innerHTML = '<option value="" selected>Choose One</option>';
+        start_date = new Date(
+            parseInt(start_date[0]),
+            parseInt(start_date[1]),
+            parseInt(start_date[2])
+        );
+        end_date = new Date(
+            parseInt(end_date[0]),
+            parseInt(end_date[1]),
+            parseInt(end_date[2])
+        );
 
-    products.map((product) => {
-        const { id, name, price, purchase_price, status } = product;
+        let day = new Date().getDate();
+        let month = new Date().getMonth();
+        let year = new Date().getFullYear();
 
-        if (status == 1) {
-            selectProduct.innerHTML += `
-                <option value="${id}" selected>${name}</option>
+        let today = new Date(year, month + 1, day);
+
+        if (today >= start_date && today <= end_date && status == "1") {
+            selectVoucher.innerHTML += `
+                <option value="${id}" ${
+                id === data ? "selected" : ""
+            }>${code}</option>
             `;
         }
     });
 };
 
-getProducts();
+getVouchers();
 
 const updateTotalPrice = () => {
+    let percent = 100;
     let totalPrice = 0;
     let totalPurchasePrice = 0;
+
     const tr = [...tableProductBody.children];
     const subTotal = document.querySelector("#sub_total");
     const total = document.querySelector("#total");
@@ -48,6 +64,21 @@ const updateTotalPrice = () => {
         totalPrice += parseInt(prices[1].value);
         totalPurchasePrice += parseInt(prices[3].value);
     });
+
+    const selectedVoucher = parseInt(
+        [...selectVoucher.selectedOptions][0].value
+    );
+    if (selectedVoucher != 0) {
+        const { disc_value } = vouchers.find(
+            (voucher) => voucher.id === selectedVoucher
+        );
+        const discValue = parseInt(disc_value);
+
+        if (discValue != 0) percent = discValue;
+    }
+
+    totalPrice = totalPrice * (percent / 100);
+    totalPurchasePrice = totalPurchasePrice * (percent / 100);
 
     subTotal.value = totalPrice;
     total.value = totalPrice;

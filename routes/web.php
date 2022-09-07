@@ -25,16 +25,20 @@ Route::get('/products/get/all', function () {
     return response()->json(Product::all());
 });
 
-Route::get('/vouchers/get/all', function () {
-    return response()->json(Voucher::all());
-});
-
 Route::get('/products/get/{product:id}', function (Product $product) {
     return response()->json($product);
 });
 
-Route::get('/transactions/get/{transaction:id}', function (Transaction $transaction) {
+Route::get('/transaction-details/get/{transaction:id}', function (Transaction $transaction) {
     return response()->json($transaction->transactionDetail);
+});
+
+Route::get('/vouchers/get/all', function () {
+    return response()->json(Voucher::all());
+});
+
+Route::get('/voucher-usages/get/{transaction:id}', function (Transaction $transaction) {
+    return response()->json($transaction->voucherUsage);
 });
 
 Route::controller(AuthController::class)->group(function () {

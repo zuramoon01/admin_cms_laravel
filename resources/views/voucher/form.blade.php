@@ -90,13 +90,11 @@
     </div>
 
     <script>
-        let discValue = 0
         let discValueForm = document.querySelector('#disc_value')
 
         const updateDiscValue = (value) => {
-            discValue = value
 
-            if (discValue === 1) {
+            if (value === 1) {
                 discValueForm.readOnly = true
                 discValueForm.value = 0
             } else {

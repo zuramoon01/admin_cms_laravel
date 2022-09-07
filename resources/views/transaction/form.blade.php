@@ -66,7 +66,7 @@
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
-                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}" readonly>
+                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}">
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
@@ -88,7 +88,8 @@
 
         <div class="mb-3 col-md-4">
             <label for="voucher_id" class="form-label">Voucher</label>
-            <select id="voucher_id" class="custom-select" name="voucher_id" onchange="updateTotalPrice()" disabled>
+            <select id="voucher_id" class="custom-select" name="voucher_id" onchange="updateTotalPrice()"
+                @if ($menu === 'create') disabled @endif>
             </select>
         </div>
 

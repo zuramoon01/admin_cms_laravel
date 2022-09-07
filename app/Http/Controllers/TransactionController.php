@@ -140,7 +140,7 @@ class TransactionController extends Controller
             ]);
         }
 
-        if ($request->voucher_id != 0) {
+        if ($request->voucher_id !== "0" || $request->voucher_id !== null) {
             VoucherUsage::create([
                 'transactions_id' => $id,
                 'vouchers_id' => $request->voucher_id,
@@ -252,6 +252,14 @@ class TransactionController extends Controller
         ]);
 
         Transaction::where('id', $transaction->id)->update($validated);
+
+        if ($request->voucher_id !== "0" || $request->voucher_id !== null) {
+            VoucherUsage::where('id', $transaction->voucherUsage->first()->id)
+                ->update([
+                    'vouchers_id' => $request->voucher_id,
+                    'discounted_value' => Voucher::where('id', $request->voucher_id)->get()->first()->disc_value,
+                ]);
+        }
 
         return redirect('/transactions/data');
     }
