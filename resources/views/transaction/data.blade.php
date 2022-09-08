@@ -90,16 +90,6 @@
             </tr>
         </thead>
 
-        <tfoot>
-            <tr>
-                @foreach ($table['title'] as $title)
-                    <th>{{ $title }}</th>
-                @endforeach
-
-                <th class="text-center">Action</th>
-            </tr>
-        </tfoot>
-
         <tbody>
             @foreach ($table['data'] as $data)
                 <tr>

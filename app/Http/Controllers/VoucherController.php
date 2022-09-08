@@ -62,7 +62,7 @@ class VoucherController extends Controller
 
         $voucher = Voucher::create($validated);
 
-        return redirect('/vouchers/data');
+        return redirect('/vouchers');
     }
 
     public function data()
@@ -136,13 +136,13 @@ class VoucherController extends Controller
 
         Voucher::where('id', $voucher->id)->update($validated);
 
-        return redirect('/vouchers/data');
+        return redirect('/vouchers');
     }
 
     public function delete(Request $request, Voucher $voucher)
     {
         Voucher::destroy($voucher->id);
 
-        return redirect('/vouchers/data');
+        return redirect('/vouchers');
     }
 }

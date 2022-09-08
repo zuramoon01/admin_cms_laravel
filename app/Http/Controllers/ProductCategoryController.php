@@ -38,7 +38,7 @@ class ProductCategoryController extends Controller
 
         $productCategory = ProductCategory::create($validated);
 
-        return redirect('/product-categories/data');
+        return redirect('/product-categories');
     }
 
     public function data()
@@ -91,13 +91,13 @@ class ProductCategoryController extends Controller
 
         ProductCategory::where('id', $productCategory->id)->update($validated);
 
-        return redirect('/product-categories/data');
+        return redirect('/product-categories');
     }
 
     public function delete(Request $request, ProductCategory $productCategory)
     {
         ProductCategory::destroy($productCategory->id);
 
-        return redirect('/product-categories/data');
+        return redirect('/product-categories');
     }
 }

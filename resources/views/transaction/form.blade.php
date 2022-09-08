@@ -23,7 +23,7 @@
             </div>
 
             <div class="mb-3 col-md-3">
-                <button type="button" class="btn btn-primary" onclick="addProduct()">Primary</button>
+                <button type="button" class="btn btn-primary" onclick="addProduct()">Add Product</button>
             </div>
         @endif
 
@@ -66,7 +66,7 @@
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
-                                        <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}" >
+                                        <input type="number" class="form-control" id="qty" name="qty[]" onchange="updatePrice()" onkeydown="updatePrice()" value="{{ $product->qty }}" >
                                     </td>
                                     <td>
                                         {{-- prettier-ignore --}}
@@ -81,6 +81,11 @@
                                 </tr>
                             @endforeach
                         @endisset
+                        <tr data-keterangan="no">
+                            <td class="text-center font-weight-bold" colspan="2">Total</td>
+                            <td id="add-product-total" class="text-center font-weight-bold">0</td>
+                            <td></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

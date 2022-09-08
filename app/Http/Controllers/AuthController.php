@@ -39,7 +39,7 @@ class AuthController extends Controller
         if (Auth::attempt($rules)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/transactions/data');
+            return redirect()->intended('/');
         }
 
         return back();

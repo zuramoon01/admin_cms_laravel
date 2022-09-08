@@ -27,7 +27,7 @@ class ProductController extends Controller
                     'label' => 'Code',
                 ],
                 [
-                    'type' => 'text',
+                    'type' => 'number',
                     'name' => 'price',
                     'label' => 'Price',
                 ],
@@ -94,7 +94,7 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        return redirect('/products/data');
+        return redirect('/products');
     }
 
     public function data()
@@ -215,13 +215,13 @@ class ProductController extends Controller
 
         Product::where('id', $product->id)->update($validated);
 
-        return redirect('/products/data');
+        return redirect('/products');
     }
 
     public function delete(Request $request, Product $product)
     {
         Product::destroy($product->id);
 
-        return redirect('/products/data');
+        return redirect('/products');
     }
 }

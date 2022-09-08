@@ -22,6 +22,16 @@
                             <x-all.flash_message :message="$message" />
                         @enderror
                     </div>
+                @elseif ($formInput['type'] === 'number')
+                    <div class="mb-3 col-md-12">
+                        <label for="{{ $formInput['name'] }}" class="form-label">{{ $formInput['label'] }}</label>
+                        {{-- prettier-ignore --}}
+                            <input type="number" class="form-control" id="{{ $formInput['name'] }}" name="{{ $formInput['name'] }}" placeholder="{{ $formInput['label'] }}" value="{{ isset($product) ? $product[$formInput['name']] : old($formInput['name']) }}">
+
+                        @error($formInput['name'])
+                            <x-all.flash_message :message="$message" />
+                        @enderror
+                    </div>
                 @elseif($formInput['type'] === 'select')
                     <div class="mb-3 col-md-12">
                         <label for="{{ $formInput['name'] }}" class="form-label">{{ $formInput['label'] }}</label>
@@ -55,7 +65,7 @@
                             @for ($i = 0; $i < 2; $i++)
                                 <div class="form-check form-check-inline">
                                     {{-- prettier-ignore --}}
-                                    <input class="form-check-input" type="radio" name="{{ $formInput['name'] }}" id="{{ $formInput['name'] . $i }}" value="{{ $i }}" @if ((isset($product) && $i === $product[$formInput['name']]) || $i === 0) checked @endif>
+                                    <input class="form-check-input" type="radio" name="{{ $formInput['name'] }}" id="{{ $formInput['name'] . $i }}" value="{{ $i }}" @if(isset($product) && $i === $product[$formInput['name']]) checked @endif @if($formInput['name'] === "status" && $i === 1) checked @endif>
                                     <label class="form-check-label" for="{{ $formInput['name'] . $i }}">
                                         {{ $i === 0 ? 'Tidak Aktif' : 'Aktif' }}
                                     </label>

@@ -5,28 +5,24 @@ $navItems = [
     [
         'name' => 'product_category',
         'label' => 'Product Category',
-        'data' => 'ProductCategory',
         'icon' => 'database',
         'link' => 'product-categories',
     ],
     [
         'name' => 'product',
         'label' => 'Product',
-        'data' => 'Product',
         'icon' => 'hockey-puck',
         'link' => 'products',
     ],
     [
         'name' => 'voucher',
         'label' => 'Voucher',
-        'data' => 'Voucher',
         'icon' => 'ticket-alt',
         'link' => 'vouchers',
     ],
     [
         'name' => 'transaction',
         'label' => 'Transaction',
-        'data' => 'Transaction',
         'icon' => 'credit-card',
         'link' => 'transactions',
     ],
@@ -56,7 +52,7 @@ $navItems = [
                 <hr class="sidebar-divider my-0">
 
                 <!-- Nav Item - Dashboard -->
-                <li class="nav-item">
+                <li class="nav-item @if ($name === 'dashboard') active @endif">
                     <a class="nav-link" href="/">
                         <i class="fas fa-fw fa-tachometer-alt"></i>
                         <span>Dashboard</span>
@@ -68,34 +64,17 @@ $navItems = [
 
                 <!-- Heading -->
                 <div class="sidebar-heading">
-                    Interface
+                    Menu
                 </div>
 
+
                 @foreach ($navItems as $item)
-                    <!-- Nav Item - {{ $item['label'] }} Collapse Menu -->
+                    <!-- Nav Item - {{ $item['label'] }} -->
                     <li class="nav-item @if ($name === $item['name']) active @endif">
-                        <a class="nav-link {{ $name === $item['name'] ? '' : 'collapsed' }}" href="#"
-                            data-toggle="collapse" data-target="#collapse{{ $item['data'] }}" aria-expanded="true"
-                            aria-controls="collapse{{ $item['data'] }}">
+                        <a class="nav-link" href="/{{ $item['link'] }}">
                             <i class="fas fa-fw fa-{{ $item['icon'] }}"></i>
                             <span>{{ $item['label'] }}</span>
                         </a>
-
-                        <div id="collapse{{ $item['data'] }}"
-                            class="collapse @if ($name === $item['name']) show @endif"
-                            aria-labelledby="heading{{ $item['data'] }}" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <h6 class="collapse-header">{{ $item['label'] }}:</h6>
-
-                                <a class="collapse-item @if ($name === $item['name'] && $menu === 'edit') btn-link disabled @endif @if ($name === $item['name'] && ($menu === 'create' || $menu === 'edit')) active @endif"
-                                    href="/{{ $item['link'] }}/create">
-                                    {{ $name === $item['name'] && $menu === 'edit' ? 'Edit' : 'Create' }}
-                                </a>
-
-                                <a class="collapse-item @if ($name === $item['name'] && $menu === 'data') active @endif"
-                                    href="/{{ $item['link'] }}/data">Data</a>
-                            </div>
-                        </div>
                     </li>
                 @endforeach
 

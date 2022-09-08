@@ -87,31 +87,50 @@ const addProduct = () => {
 
     if (newProduct) {
         const { id, name, price, purchase_price } = newProduct;
+        const tableProductBodyChildren = tableProductBody.childElementCount;
 
-        tableProductBody.innerHTML += `
-            <tr>
-                <td>
-                    <input type="hidden" class="form-control" id="product_id" name="product_id[]" value="${id}">
-                    <input type="text" class="form-control" id="product_name" name="product_name[]" value="${name}" readonly>
-                </td>
-                <td>
-                    <input type="number" class="form-control" id="qty" name="qty[]" min="0" max="5" onchange="updatePrice(this)" onkeydown="updatePrice(this)" value="${qty}">
-                </td>
-                <td>
-                    <input type="hidden" class="form-control" id="price_satuan" name="price_satuan[]" value="${price}">
-                    <input type="hidden" class="form-control" id="price_total" name="price_total[]" value="${
-                        price * qty
-                    }">
-                    <input type="hidden" class="form-control" id="price_purchase_satuan" name="price_purchase_satuan[]" value="${purchase_price}">
-                    <input type="text" class="form-control" id="price_purchase_total" name="price_purchase_total[]" value="${
-                        purchase_price * qty
-                    }" readonly>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger mb-3" onclick="removeProduct(this)"><i class="fas fa-trash"></i> Remove</button>
-                </td>
-            </tr>
+        const list = document.createElement("tr");
+        list.innerHTML = `
+            <td>
+                <input type="hidden" class="form-control" id="product_id" name="product_id[]" value="${id}">
+                <input type="text" class="form-control" id="product_name" name="product_name[]" value="${name}" readonly>
+            </td>
+            <td>
+                <input type="number" class="form-control" id="qty" name="qty[]" onchange="updatePrice(this)" onkeydown="updatePrice(this)" value="${qty}">
+            </td>
+            <td>
+                <input type="hidden" class="form-control" id="price_satuan" name="price_satuan[]" value="${price}">
+                <input type="hidden" class="form-control" id="price_total" name="price_total[]" value="${
+                    price * qty
+                }">
+                <input type="hidden" class="form-control" id="price_purchase_satuan" name="price_purchase_satuan[]" value="${purchase_price}">
+                <input type="text" class="form-control" id="price_purchase_total" name="price_purchase_total[]" value="${
+                    purchase_price * qty
+                }" readonly>
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger mb-3" onclick="removeProduct(this)"><i class="fas fa-trash"></i> Remove</button>
+            </td>
         `;
+
+        if (
+            tableProductBody.children[tableProductBodyChildren - 2] !==
+            undefined
+        ) {
+            console.log(
+                tableProductBody.children[tableProductBodyChildren - 2]
+            );
+            tableProductBody.insertBefore(
+                list,
+                tableProductBody.children[tableProductBodyChildren - 2]
+            );
+            console.log("ok");
+        } else {
+            tableProductBody.insertBefore(
+                list,
+                tableProductBody.lastElementChild
+            );
+        }
 
         selectVoucher.disabled = false;
         updateTotalPrice();
@@ -119,6 +138,33 @@ const addProduct = () => {
 };
 
 const updateTotalPrice = () => {
+    if (selectVoucher.value != 0) {
+        const newVoucher = vouchers.find(
+            (voucher) => voucher.id == selectVoucher.value
+        );
+
+        const addProductDiscountTotal = document.querySelector(
+            "#add-product-discount-total"
+        );
+
+        if (addProductDiscountTotal === null) {
+            const list = document.createElement("tr");
+            list.setAttribute("data-keterangan", "no");
+            list.innerHTML = `
+                <td class="text-center font-weight-bold" colspan="2">Discounted Value</td>
+                <td class="text-center font-weight-bold" id="add-product-discount-total">${newVoucher.disc_value}%</td>
+                <td></td>
+            `;
+
+            tableProductBody.insertBefore(
+                list,
+                tableProductBody.lastElementChild
+            );
+        } else {
+            addProductDiscountTotal.innerText = newVoucher.disc_value + "%";
+        }
+    }
+
     let percent = 100;
     let subTotalPrice = 0;
     let totalPrice = 0;
@@ -132,11 +178,14 @@ const updateTotalPrice = () => {
     const purchaseTotalBeforeDiscount = document.querySelector(
         "#total_before_discount"
     );
+    const addProductTotal = document.querySelector("#add-product-total");
 
     tr.forEach((e) => {
-        const prices = [...e.children[2].children];
-        totalPrice += parseInt(prices[1].value);
-        totalPurchasePrice += parseInt(prices[3].value);
+        if (!e.hasAttribute("data-keterangan")) {
+            const prices = [...e.children[2].children];
+            totalPrice += parseInt(prices[1].value);
+            totalPurchasePrice += parseInt(prices[3].value);
+        }
     });
 
     const selectedVoucher = parseInt(
@@ -160,6 +209,7 @@ const updateTotalPrice = () => {
     total.value = totalPrice;
     purchaseTotal.value = totalPurchasePrice;
     purchaseTotalBeforeDiscount.value = totalBeforeDiscount;
+    addProductTotal.innerText = totalPurchasePrice;
 };
 
 const updatePrice = (e) => {
