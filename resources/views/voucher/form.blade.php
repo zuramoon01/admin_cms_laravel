@@ -49,7 +49,7 @@
                             @for ($i = 0; $i < 2; $i++)
                                 <div class="form-check form-check-inline">
                                     {{-- prettier-ignore --}}
-                                    <input class="form-check-input" type="radio" name="{{ $formInput['name'] }}" id="{{ $formInput['name'] . $i }}" value="{{ $i }}" @if ((isset($voucher) && $i === $voucher[$formInput['name']])) checked @endif>
+                                    <input class="form-check-input" type="radio" name="{{ $formInput['name'] }}" id="{{ $formInput['name'] . $i }}" value="{{ $i }}" @if ((isset($voucher) && $i === $voucher[$formInput['name']])) checked @endif  @if($formInput['name'] == 'status') checked @endif>
                                     <label class="form-check-label" for="{{ $formInput['name'] . $i }}">
                                         {{ $i === 0 ? 'Tidak Aktif' : 'Aktif' }}
                                     </label>
@@ -95,11 +95,9 @@
         const updateDiscValue = (value) => {
 
             if (value === 1) {
-                discValueForm.readOnly = true
-                discValueForm.value = 0
+                discValueForm.removeAttribute('max')
             } else {
-                discValueForm.readOnly = false
-                discValueForm.value = ""
+                discValueForm.setAttribute('max', 100)
             }
         }
     </script>

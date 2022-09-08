@@ -21,7 +21,8 @@ const getVouchers = async () => {
     selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
 
     vouchers.map((voucher) => {
-        let { id, code, disc_value, start_date, end_date, status } = voucher;
+        let { id, code, type, disc_value, start_date, end_date, status } =
+            voucher;
         start_date = start_date.split("-");
         end_date = end_date.split("-");
 
@@ -43,10 +44,9 @@ const getVouchers = async () => {
         let today = new Date(year, month + 1, day);
 
         if (today >= start_date && today <= end_date && status == "1") {
+            const discPrice = `${parseInt(disc_value)}${type == 2 ? "%" : ""}`;
             selectVoucher.innerHTML += `
-                <option value="${id}">${code} | Discount ${parseInt(
-                disc_value
-            )}%</option>
+                <option value="${id}">${code} | Discount ${discPrice}</option>
             `;
         }
     });
@@ -117,14 +117,10 @@ const addProduct = () => {
             tableProductBody.children[tableProductBodyChildren - 2] !==
             undefined
         ) {
-            console.log(
-                tableProductBody.children[tableProductBodyChildren - 2]
-            );
             tableProductBody.insertBefore(
                 list,
                 tableProductBody.children[tableProductBodyChildren - 2]
             );
-            console.log("ok");
         } else {
             tableProductBody.insertBefore(
                 list,
@@ -152,7 +148,9 @@ const updateTotalPrice = () => {
             list.setAttribute("data-keterangan", "no");
             list.innerHTML = `
                 <td class="text-center font-weight-bold" colspan="2">Discounted Value</td>
-                <td class="text-center font-weight-bold" id="add-product-discount-total">${newVoucher.disc_value}%</td>
+                <td class="text-center font-weight-bold" id="add-product-discount-total">${parseInt(
+                    newVoucher.disc_value
+                )}${newVoucher.type == 2 ? "%" : ""}</td>
                 <td></td>
             `;
 
@@ -161,11 +159,26 @@ const updateTotalPrice = () => {
                 tableProductBody.lastElementChild
             );
         } else {
-            addProductDiscountTotal.innerText = newVoucher.disc_value + "%";
+            addProductDiscountTotal.innerText =
+                parseInt(newVoucher.disc_value) +
+                `${newVoucher.type == 2 ? "%" : ""}`;
+        }
+    } else {
+        const tableProductBodyChildren = tableProductBody.childElementCount;
+
+        if (
+            tableProductBody.children[tableProductBodyChildren - 2] !==
+                undefined &&
+            tableProductBody.children[
+                tableProductBodyChildren - 2
+            ].hasAttribute("data-keterangan")
+        ) {
+            tableProductBody.children[tableProductBodyChildren - 2].remove();
         }
     }
 
-    let percent = 100;
+    let reducePrice = 100;
+    let reduceType = 2;
     let subTotalPrice = 0;
     let totalPrice = 0;
     let totalPurchasePrice = 0;
@@ -191,19 +204,38 @@ const updateTotalPrice = () => {
     const selectedVoucher = parseInt(
         [...selectVoucher.selectedOptions][0].value
     );
+
     if (selectedVoucher != 0) {
-        const { disc_value } = vouchers.find(
+        const { type, disc_value } = vouchers.find(
             (voucher) => voucher.id === selectedVoucher
         );
-        const discValue = parseInt(disc_value);
 
-        if (discValue != 0) percent = discValue;
+        const discValue = parseInt(disc_value);
+        reducePrice = discValue;
+        reduceType = parseInt(type);
     }
 
     subTotalPrice = totalPrice;
-    totalPrice = totalPrice * (percent / 100);
+    if (reducePrice !== 100) {
+        if (reduceType == 2) {
+            totalPrice = totalPrice - totalPrice * (reducePrice / 100);
+        } else {
+            totalPrice = totalPrice - reducePrice;
+        }
+    } else {
+        totalPrice = totalPrice * (reducePrice / 100);
+    }
     totalBeforeDiscount = totalPurchasePrice;
-    totalPurchasePrice = totalPurchasePrice * (percent / 100);
+    if (reducePrice !== 100) {
+        if (reduceType == 2) {
+            totalPurchasePrice =
+                totalPurchasePrice - totalPurchasePrice * (reducePrice / 100);
+        } else {
+            totalPurchasePrice = totalPurchasePrice - reducePrice;
+        }
+    } else {
+        totalPurchasePrice = totalPurchasePrice * (reducePrice / 100);
+    }
 
     subTotal.value = subTotalPrice;
     total.value = totalPrice;

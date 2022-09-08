@@ -7,17 +7,15 @@ const idTransaction = {
 let vouchers = [];
 
 const getVouchers = async () => {
-    let response = await fetch("/api/vouchers/all");
-    let data = await response.json();
+    const response = await fetch("/api/vouchers/all");
+    const data = await response.json();
     vouchers = data;
 
-    response = await fetch(`/api/voucher-usages/${idTransaction}`);
-    data = (await response.json())[0]["vouchers_id"];
-
-    selectVoucher.innerHTML = '<option value="0">Choose One</option>';
+    selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
 
     vouchers.map((voucher) => {
-        let { id, code, disc_value, start_date, end_date, status } = voucher;
+        let { id, code, type, disc_value, start_date, end_date, status } =
+            voucher;
         start_date = start_date.split("-");
         end_date = end_date.split("-");
 
@@ -39,9 +37,9 @@ const getVouchers = async () => {
         let today = new Date(year, month + 1, day);
 
         if (today >= start_date && today <= end_date && status == "1") {
-            // prettier-ignore
+            const discPrice = `${parseInt(disc_value)}${type == 2 ? "%" : ""}`;
             selectVoucher.innerHTML += `
-                <option value="${id}" ${id === data ? "selected" : ""}>${code} | Discount ${parseInt(disc_value)}%</option>
+                <option value="${id}">${code} | Discount ${discPrice}</option>
             `;
         }
     });
@@ -50,7 +48,50 @@ const getVouchers = async () => {
 getVouchers();
 
 const updateTotalPrice = () => {
-    let percent = 100;
+    if (selectVoucher.value != 0) {
+        const newVoucher = vouchers.find(
+            (voucher) => voucher.id == selectVoucher.value
+        );
+
+        const addProductDiscountTotal = document.querySelector(
+            "#add-product-discount-total"
+        );
+
+        if (addProductDiscountTotal === null) {
+            const list = document.createElement("tr");
+            list.setAttribute("data-keterangan", "no");
+            list.innerHTML = `
+                <td class="text-center font-weight-bold" colspan="2">Discounted Value</td>
+                <td class="text-center font-weight-bold" id="add-product-discount-total">${parseInt(
+                    newVoucher.disc_value
+                )}${newVoucher.type == 2 ? "%" : ""}</td>
+            `;
+
+            tableProductBody.insertBefore(
+                list,
+                tableProductBody.lastElementChild
+            );
+        } else {
+            addProductDiscountTotal.innerText =
+                parseInt(newVoucher.disc_value) +
+                `${newVoucher.type == 2 ? "%" : ""}`;
+        }
+    } else {
+        const tableProductBodyChildren = tableProductBody.childElementCount;
+
+        if (
+            tableProductBody.children[tableProductBodyChildren - 2] !==
+                undefined &&
+            tableProductBody.children[
+                tableProductBodyChildren - 2
+            ].hasAttribute("data-keterangan")
+        ) {
+            tableProductBody.children[tableProductBodyChildren - 2].remove();
+        }
+    }
+
+    let reducePrice = 100;
+    let reduceType = 2;
     let subTotalPrice = 0;
     let totalPrice = 0;
     let totalPurchasePrice = 0;
@@ -63,34 +104,57 @@ const updateTotalPrice = () => {
     const purchaseTotalBeforeDiscount = document.querySelector(
         "#total_before_discount"
     );
+    const addProductTotal = document.querySelector("#add-product-total");
 
     tr.forEach((e) => {
-        const prices = [...e.children[2].children];
-        totalPrice += parseInt(prices[1].value);
-        totalPurchasePrice += parseInt(prices[3].value);
+        if (!e.hasAttribute("data-keterangan")) {
+            const prices = [...e.children[2].children];
+            totalPrice += parseInt(prices[1].value);
+            totalPurchasePrice += parseInt(prices[3].value);
+        }
     });
 
     const selectedVoucher = parseInt(
         [...selectVoucher.selectedOptions][0].value
     );
+
     if (selectedVoucher != 0) {
-        const { disc_value } = vouchers.find(
+        const { type, disc_value } = vouchers.find(
             (voucher) => voucher.id === selectedVoucher
         );
-        const discValue = parseInt(disc_value);
 
-        if (discValue != 0) percent = discValue;
+        const discValue = parseInt(disc_value);
+        reducePrice = discValue;
+        reduceType = parseInt(type);
     }
 
     subTotalPrice = totalPrice;
-    totalPrice = totalPrice * (percent / 100);
+    if (reducePrice !== 100) {
+        if (reduceType == 2) {
+            totalPrice = totalPrice - totalPrice * (reducePrice / 100);
+        } else {
+            totalPrice = totalPrice - reducePrice;
+        }
+    } else {
+        totalPrice = totalPrice * (reducePrice / 100);
+    }
     totalBeforeDiscount = totalPurchasePrice;
-    totalPurchasePrice = totalPurchasePrice * (percent / 100);
+    if (reducePrice !== 100) {
+        if (reduceType == 2) {
+            totalPurchasePrice =
+                totalPurchasePrice - totalPurchasePrice * (reducePrice / 100);
+        } else {
+            totalPurchasePrice = totalPurchasePrice - reducePrice;
+        }
+    } else {
+        totalPurchasePrice = totalPurchasePrice * (reducePrice / 100);
+    }
 
     subTotal.value = subTotalPrice;
     total.value = totalPrice;
     purchaseTotal.value = totalPurchasePrice;
     purchaseTotalBeforeDiscount.value = totalBeforeDiscount;
+    addProductTotal.innerText = totalPurchasePrice;
 };
 
 const updateDiscountTotalPrice = async () => {
@@ -104,18 +168,27 @@ const updateDiscountTotalPrice = async () => {
     vouchers = data;
 
     response = await fetch(`/api/voucher-usages/${idTransaction}`);
-    data = (await response.json())[0]["vouchers_id"];
+    try {
+        data = (await response.json())[0]["vouchers_id"];
+    } catch (error) {
+        data = null;
+    }
 
-    vouchers.map((voucher) => {
-        const { id, disc_value } = voucher;
-        console.log(id, [...selectVoucher.selectedOptions][0]);
+    if (data !== null) {
+        vouchers.map((voucher) => {
+            const { id, disc_value } = voucher;
 
-        if (id === data) {
-            purchaseTotal.value = parseInt(purchaseTotal.value);
-            purchaseTotalBeforeDiscount.value =
-                parseInt(purchaseTotal.value) * (disc_value / 100);
-        }
-    });
+            if (id === data) {
+                purchaseTotal.value = parseInt(purchaseTotal.value);
+                purchaseTotalBeforeDiscount.value =
+                    parseInt(purchaseTotal.value) * (disc_value / 100);
+            }
+        });
+    } else {
+        purchaseTotal.value = parseInt(purchaseTotal.value);
+        console.log(purchaseTotal);
+        purchaseTotalBeforeDiscount.value = parseInt(purchaseTotal.value);
+    }
 };
 
 updateDiscountTotalPrice();
