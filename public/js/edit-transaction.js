@@ -7,11 +7,17 @@ const idTransaction = {
 let vouchers = [];
 
 const getVouchers = async () => {
-    const response = await fetch("/api/vouchers/all");
+    let response = await fetch(`/api/voucher-usages/${idTransaction}`);
+    const dataProduct = await response.json();
+
+    response = await fetch("/api/vouchers/all");
     const data = await response.json();
     vouchers = data;
 
-    selectVoucher.innerHTML = '<option value="0" selected>Choose One</option>';
+    selectVoucher.innerHTML =
+        dataProduct.length > 0
+            ? "<option value='0'>Choose One</option>"
+            : "<option value='0' selected>Choose One</option>";
 
     vouchers.map((voucher) => {
         let { id, code, type, disc_value, start_date, end_date, status } =
@@ -38,9 +44,44 @@ const getVouchers = async () => {
 
         if (today >= start_date && today <= end_date && status == "1") {
             const discPrice = `${parseInt(disc_value)}${type == 2 ? "%" : ""}`;
-            selectVoucher.innerHTML += `
+            selectVoucher.innerHTML +=
+                dataProduct.length > 0 && id == dataProduct[0].vouchers_id
+                    ? `
+                <option value="${id}" selected>${code} | Discount ${discPrice}</option>
+            `
+                    : `
                 <option value="${id}">${code} | Discount ${discPrice}</option>
             `;
+        }
+
+        if (selectVoucher.value != 0) {
+            const newVoucher = vouchers.find(
+                (voucher) => voucher.id == selectVoucher.value
+            );
+
+            const addProductDiscountTotal = document.querySelector(
+                "#add-product-discount-total"
+            );
+
+            if (addProductDiscountTotal === null) {
+                const list = document.createElement("tr");
+                list.setAttribute("data-keterangan", "no");
+                list.innerHTML = `
+                <td class="text-center font-weight-bold" colspan="2">Discounted Value</td>
+                <td class="text-center font-weight-bold" id="add-product-discount-total">${parseInt(
+                    newVoucher.disc_value
+                )}${newVoucher.type == 2 ? "%" : ""}</td>
+            `;
+
+                tableProductBody.insertBefore(
+                    list,
+                    tableProductBody.lastElementChild
+                );
+            } else {
+                addProductDiscountTotal.innerText =
+                    parseInt(newVoucher.disc_value) +
+                    `${newVoucher.type == 2 ? "%" : ""}`;
+            }
         }
     });
 };

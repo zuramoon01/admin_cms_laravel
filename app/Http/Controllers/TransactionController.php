@@ -284,12 +284,22 @@ class TransactionController extends Controller
 
         Transaction::where('id', $transaction->id)->update($validated);
 
-        if ($request->voucher_id !== "0" && $request->voucher_id !== null) {
-            VoucherUsage::where('id', $transaction->voucherUsage->first()->id)
-                ->update([
+        if ($request->voucher_id !== "0") {
+            if ($transaction->voucherUsage->first() === null) {
+                VoucherUsage::create([
+                    'transactions_id' => $transaction->id,
                     'vouchers_id' => $request->voucher_id,
                     'discounted_value' => Voucher::where('id', $request->voucher_id)->get()->first()->disc_value,
                 ]);
+            } else {
+                VoucherUsage::where('id', $transaction->voucherUsage->first()->id)
+                    ->update([
+                        'vouchers_id' => $request->voucher_id,
+                        'discounted_value' => Voucher::where('id', $request->voucher_id)->get()->first()->disc_value,
+                    ]);
+            }
+        } else {
+            VoucherUsage::destroy($transaction->voucherUsage->first()->id);
         }
 
         return redirect('/transactions');
