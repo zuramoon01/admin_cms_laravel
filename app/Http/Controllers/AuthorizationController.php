@@ -51,7 +51,7 @@ class AuthorizationController extends Controller
                         Authorization::create([
                             'role_id' => (int)$role[$i],
                             'menu_id' => (int)$menu[$i],
-                            'authorization_type_id' => (int)$role[$i],
+                            'authorization_type_id' => $j,
                         ]);
                     } else {
                         Authorization::where('role_id', $role[$i])
@@ -60,11 +60,13 @@ class AuthorizationController extends Controller
                             ->update([
                                 'role_id' => (int)$role[$i],
                                 'menu_id' => (int)$menu[$i],
-                                'authorization_type_id' => (int)$role[$i],
+                                'authorization_type_id' => $j,
                             ]);
                     }
                 }
             }
         }
+
+        return response()->json('ok');
     }
 }
