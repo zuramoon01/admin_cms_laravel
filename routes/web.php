@@ -34,7 +34,7 @@ Route::middleware(['auth'])->group(function () {
             'name' => "dashboard",
             "menu" => "",
         ]);
-    });
+    })->name('home');
 
     Route::controller(AuthorizationController::class)
         ->prefix('/authorizations')->group(function () {
@@ -42,43 +42,45 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/update', 'update');
         });
 
-    Route::controller(ProductCategoryController::class)
-        ->prefix('/product-categories')->group(function () {
-            Route::get('/', 'data');
-            Route::get('/create', 'create');
-            Route::post('/store', 'store');
-            Route::get('/{product_category:id}/edit', 'edit');
-            Route::put('/{product_category:id}/update', 'update');
-            Route::delete('/{product_category:id}/delete', 'delete');
-        });
+    Route::middleware(['authorization'])->group(function () {
+        Route::controller(ProductCategoryController::class)
+            ->prefix('/product-categories')->group(function () {
+                Route::get('/', 'data');
+                Route::get('/create', 'create');
+                Route::post('/store', 'store');
+                Route::get('/{product_category:id}/edit', 'edit');
+                Route::put('/{product_category:id}/update', 'update');
+                Route::delete('/{product_category:id}/delete', 'delete');
+            });
 
-    Route::controller(ProductController::class)
-        ->prefix('/products')->group(function () {
-            Route::get('/', 'data');
-            Route::get('/create', 'create');
-            Route::post('/store', 'store');
-            Route::get('/{product:id}/edit', 'edit');
-            Route::put('/{product:id}/update', 'update');
-            Route::delete('/{product:id}/delete', 'delete');
-        });
+        Route::controller(ProductController::class)
+            ->prefix('/products')->group(function () {
+                Route::get('/', 'data');
+                Route::get('/create', 'create');
+                Route::post('/store', 'store');
+                Route::get('/{product:id}/edit', 'edit');
+                Route::put('/{product:id}/update', 'update');
+                Route::delete('/{product:id}/delete', 'delete');
+            });
 
-    Route::controller(VoucherController::class)
-        ->prefix('/vouchers')->group(function () {
-            Route::get('/', 'data');
-            Route::get('/create', 'create');
-            Route::post('/store', 'store');
-            Route::get('/{voucher:id}/edit', 'edit');
-            Route::put('/{voucher:id}/update', 'update');
-            Route::delete('/{voucher:id}/delete', 'delete');
-        });
+        Route::controller(VoucherController::class)
+            ->prefix('/vouchers')->group(function () {
+                Route::get('/', 'data');
+                Route::get('/create', 'create');
+                Route::post('/store', 'store');
+                Route::get('/{voucher:id}/edit', 'edit');
+                Route::put('/{voucher:id}/update', 'update');
+                Route::delete('/{voucher:id}/delete', 'delete');
+            });
 
-    Route::controller(TransactionController::class)
-        ->prefix('/transactions')->group(function () {
-            Route::get('/', 'data');
-            Route::get('/create', 'create');
-            Route::post('/store', 'store');
-            Route::get('/{transaction:id}/edit', 'edit');
-            Route::put('/{transaction:id}/update', 'update');
-            Route::delete('/{transaction:id}/delete', 'delete');
-        });
+        Route::controller(TransactionController::class)
+            ->prefix('/transactions')->group(function () {
+                Route::get('/', 'data');
+                Route::get('/create', 'create');
+                Route::post('/store', 'store');
+                Route::get('/{transaction:id}/edit', 'edit');
+                Route::put('/{transaction:id}/update', 'update');
+                Route::delete('/{transaction:id}/delete', 'delete');
+            });
+    });
 });

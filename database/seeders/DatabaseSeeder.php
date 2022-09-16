@@ -63,17 +63,17 @@ class DatabaseSeeder extends Seeder
 
         Menu::create([
             'menu_name' => 'Product',
-            'route' => 'product',
+            'route' => 'products',
         ]);
 
         Menu::create([
             'menu_name' => 'Voucher',
-            'route' => 'voucher',
+            'route' => 'vouchers',
         ]);
 
         Menu::create([
             'menu_name' => 'Transaction',
-            'route' => 'transaction',
+            'route' => 'transactions',
         ]);
 
         ProductCategory::create([
