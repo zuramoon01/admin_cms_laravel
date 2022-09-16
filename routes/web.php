@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\AuthorizationController;
 use App\Http\Controllers\ProductCategoryController;
 
 /*
@@ -34,8 +35,15 @@ Route::middleware(['auth'])->group(function () {
             "menu" => "",
         ]);
     });
-    Route::controller(ProductCategoryController::class)->group(function () {
-        Route::prefix('/product-categories')->group(function () {
+
+    Route::controller(AuthorizationController::class)
+        ->prefix('/authorizations')->group(function () {
+            Route::get('/', 'data');
+            Route::get('/update', 'update');
+        });
+
+    Route::controller(ProductCategoryController::class)
+        ->prefix('/product-categories')->group(function () {
             Route::get('/', 'data');
             Route::get('/create', 'create');
             Route::post('/store', 'store');
@@ -43,10 +51,9 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{product_category:id}/update', 'update');
             Route::delete('/{product_category:id}/delete', 'delete');
         });
-    });
 
-    Route::controller(ProductController::class)->group(function () {
-        Route::prefix('/products')->group(function () {
+    Route::controller(ProductController::class)
+        ->prefix('/products')->group(function () {
             Route::get('/', 'data');
             Route::get('/create', 'create');
             Route::post('/store', 'store');
@@ -54,10 +61,9 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{product:id}/update', 'update');
             Route::delete('/{product:id}/delete', 'delete');
         });
-    });
 
-    Route::controller(VoucherController::class)->group(function () {
-        Route::prefix('/vouchers')->group(function () {
+    Route::controller(VoucherController::class)
+        ->prefix('/vouchers')->group(function () {
             Route::get('/', 'data');
             Route::get('/create', 'create');
             Route::post('/store', 'store');
@@ -65,10 +71,9 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{voucher:id}/update', 'update');
             Route::delete('/{voucher:id}/delete', 'delete');
         });
-    });
 
-    Route::controller(TransactionController::class)->group(function () {
-        Route::prefix('/transactions')->group(function () {
+    Route::controller(TransactionController::class)
+        ->prefix('/transactions')->group(function () {
             Route::get('/', 'data');
             Route::get('/create', 'create');
             Route::post('/store', 'store');
@@ -76,5 +81,4 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{transaction:id}/update', 'update');
             Route::delete('/{transaction:id}/delete', 'delete');
         });
-    });
 });

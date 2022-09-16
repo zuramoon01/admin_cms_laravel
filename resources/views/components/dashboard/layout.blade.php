@@ -3,6 +3,12 @@
 @php
 $navItems = [
     [
+        'name' => 'authorization',
+        'label' => 'Authorization',
+        'icon' => 'fingerprint',
+        'link' => 'authorizations',
+    ],
+    [
         'name' => 'product_category',
         'label' => 'Product Category',
         'icon' => 'database',
