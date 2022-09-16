@@ -24,7 +24,8 @@
                                     <input class="form-check-input" type="checkbox" value="true"
                                         name="authorization_types[]" id="{{ $type->type_name }}"
                                         @foreach ($table['authorizations'] as $authorization)
-                                            @if ($authorization->menu->id === $menu->id && $authorization->authorization_type->id === $type->id) checked @endif @endforeach>
+                                            @if ($authorization->authorization_type_id !== 0)
+                                            @if ($authorization->menu->id === $menu->id && $authorization->authorization_type->id === $type->id) checked @endif @endif @endforeach>
                                 </div>
                             </td>
                         @endforeach

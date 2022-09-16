@@ -42,18 +42,26 @@ class AuthorizationController extends Controller
                     $type = ($delete[$i] === "1" ? 1 : 0);
                 }
 
-                if ($type === 1) {
-                    $authorization = Authorization::where('role_id', $role[$i])
-                        ->where('menu_id', $menu[$i])
-                        ->where('authorization_type_id', $j)->get();
+                $authorization = Authorization::where('role_id', $role[$i])
+                    ->where('menu_id', $menu[$i])
+                    ->where('authorization_type_id', $j)->get();
 
-                    if (count($authorization) === 0) {
+                if (count($authorization) === 0) {
+                    if ($type === 1) {
                         Authorization::create([
                             'role_id' => (int)$role[$i],
                             'menu_id' => (int)$menu[$i],
                             'authorization_type_id' => $j,
                         ]);
                     } else {
+                        Authorization::create([
+                            'role_id' => (int)$role[$i],
+                            'menu_id' => (int)$menu[$i],
+                            'authorization_type_id' => 0,
+                        ]);
+                    }
+                } else {
+                    if ($type === 1) {
                         Authorization::where('role_id', $role[$i])
                             ->where('menu_id', $menu[$i])
                             ->where('authorization_type_id', $j)
@@ -61,6 +69,15 @@ class AuthorizationController extends Controller
                                 'role_id' => (int)$role[$i],
                                 'menu_id' => (int)$menu[$i],
                                 'authorization_type_id' => $j,
+                            ]);
+                    } else {
+                        Authorization::where('role_id', $role[$i])
+                            ->where('menu_id', $menu[$i])
+                            ->where('authorization_type_id', $j)
+                            ->update([
+                                'role_id' => (int)$role[$i],
+                                'menu_id' => (int)$menu[$i],
+                                'authorization_type_id' => 0,
                             ]);
                     }
                 }

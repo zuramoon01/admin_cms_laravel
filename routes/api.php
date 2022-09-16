@@ -66,21 +66,4 @@ Route::get('/authorizations/{role:id}', function (Role $role) {
             ],
         ])->render()
     );
-
-    return response(view('layouts.authorization.table', [
-        'table' => [
-            'title' => [
-                'Menu',
-                'View',
-                'Add',
-                'Edit',
-                'Delete',
-            ],
-            'size' => [6, 1.5, 1.5, 1.5, 1.5],
-            'roles' => Role::all(),
-            'menus' => Menu::all(),
-            'authorization_types' => AuthorizationType::all(),
-            'authorizations' => $otorisasi
-        ],
-    ]));
 });
